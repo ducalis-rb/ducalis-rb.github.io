@@ -104,9 +104,19 @@ a {
   }
 }
 
+.logo {
+  &:hover {
+    text-decoration: none;
+  }
+}
+
 .project-name {
   margin-top: 0;
   margin-bottom: 0.1rem;
+
+  a {
+    color: #ffffff;
+  }
 
   @include large {
     font-size: 3.25rem;
