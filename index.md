@@ -16,6 +16,14 @@ class ListSorter
 end
 ```
 
+better to have names which map on business-logic
+
+```ruby
+# good
+class SortedList
+end
+```
+
 ## Ducalis::CallbacksActiverecord
 
 Please, avoid using of callbacks for models. It's better to keep models small ("dumb") and instead use "builder" classes/services: to construct new objects.
@@ -27,6 +35,32 @@ raises on ActiveRecord classes which contains callbacks
 # bad
 class Product < ActiveRecord::Base
   before_create :generate_code
+end
+```
+
+better to use builder classes for complex workflows
+
+```ruby
+# good
+class Product < ActiveRecord::Base
+end
+
+class ProductCreation
+  def initialize(attributes)
+    @attributes = attributes
+  end
+
+  def create
+    Product.create(@attributes).tap do |product|
+      generate_code(product)
+    end
+  end
+
+  private
+
+  def generate_code(product)
+    # logic goes here
+  end
 end
 ```
 
@@ -96,6 +130,33 @@ This way decreases code complexity by delegating it to lambdas and makes it easy
 
 Such approach is named [table-driven design](<https://www.d.umn.edu/~gshute/softeng/table-driven.html>). Table-driven methods are schemes that allow you to look up information in a table rather than using logic statements (i.e. case, if). In simple cases, it's quicker and easier to use logic statements, but as the logic chain becomes more complex, table-driven code is simpler than complicated logic, easier to modify and more efficient.
 
+raises on case statements
+
+```ruby
+# bad
+case grade
+when "A"
+  puts "Well done!"
+when "B"
+  puts "Try harder!"
+when "C"
+  puts "You need help!!!"
+else
+  puts "You just making it up!"
+end
+```
+
+better to use mapping
+
+```ruby
+# good
+{
+  "A" => "Well done!",
+  "B" => "Try harder!",
+  "C" => "You need help!!!",
+}.fetch(grade) { "You just making it up!" }
+```
+
 ## Ducalis::ControllersExcept
 
 Prefer to use `:only` over `:except` in controllers because it's more explicit and will be easier to maintain for new developers.
@@ -106,6 +167,22 @@ raises for `before_filters` with `except` method as array
 # bad
 class ProductsController < ApplicationController
   before_filter :update_cost, except: [:index]
+
+  def index; end
+  def edit; end
+
+  private
+
+  def update_cost; end
+end
+```
+
+better use `only` for `before_filters`
+
+```ruby
+# good
+class ProductsController < ApplicationController
+  before_filter :update_cost, only: [:edit]
 
   def index; end
   def edit; end
@@ -135,6 +212,74 @@ class ProductsController < ApplicationController
 end
 ```
 
+better to use DAO objects
+
+```ruby
+# good
+class ProductsController < ApplicationController
+  def edit
+    session_time.start!
+  end
+
+  def update
+    @time = session_time.period
+  end
+
+  private
+
+  def session_time
+    @_session_time ||= SessionTime.new(session)
+  end
+end
+
+class SessionTime
+  KEY = :start_time
+
+  def initialize(session)
+    @session = session
+    @current_time = Time.now
+  end
+
+  def start!
+    @session[KEY] = @current_time
+  end
+
+  def period
+    Date.parse(@session[KEY]) - @current_time
+  end
+end
+```
+
+## Ducalis::DescriptiveBlockNames
+
+Please, use descriptive names as block arguments. There is no any sanse to save on letters.
+
+raises for blocks with one/two chars names
+
+```ruby
+# bad
+employees.map { |e| e.call(some, word) }
+cards.each    { |c| c.date = dates[c.id] }
+Tempfile.new("name.pdf").tap do |f|
+  f.binmode
+  f.write(code)
+  f.close
+end
+```
+
+better to use descriptive names
+
+```ruby
+# good
+employees.map { |employee| employee.call(some, word) }
+cards.each    { |card| card.date = dates[card.id] }
+Tempfile.new("name.pdf").tap do |file|
+  file.binmode
+  file.write(code)
+  file.close
+end
+```
+
 ## Ducalis::EnforceNamespace
 
 Too improve code organization it is better to define namespaces to group services by high-level features, domains or any other dimension.
@@ -146,11 +291,14 @@ raises on classes without namespace
 class MyService; end
 ```
 
-raises on modules without namespace
+better to add a namespace for classes
 
 ```ruby
-# bad
-module MyServiceModule; end
+# good
+module Namespace
+  class MyService
+  end
+end
 ```
 
 ## Ducalis::EvlisOverusing
@@ -158,11 +306,21 @@ module MyServiceModule; end
 Seems like you are overusing safe navigation operator. Try to use right method (ex: `dig` for hashes), null object pattern or ensure types via explicit conversion (`to_a`, `to_s` and so on).
 Related article: https://karolgalanciak.com/blog/2017/09/24/do-or-do-not-there-is-no-try-object-number-try-considered-harmful/
 
-raises on multiple safe operator callings
+better to use NullObjects
 
 ```ruby
-# bad
-user&.person&.full_name
+# good
+class NullManufacturer
+  def contact
+    "No Manufacturer"
+  end
+end
+
+def manufacturer
+  product.manufacturer || NullManufacturer.new
+end
+
+manufacturer.contact
 ```
 
 raises on multiple try callings
@@ -180,6 +338,9 @@ You can use `fetch` instead:
 %<source>s
 ```
 
+If your hash contains `nil` or `false` values and you want to treat them not like an actual values you should preliminarily remove this values from hash.
+You can use `compact` (in case if you do not want to ignore `false` values) or `keep_if { |key, value| value }` (if you want to ignore all `false` and `nil` values).
+
 raises on using [] with default
 
 ```ruby
@@ -187,11 +348,11 @@ raises on using [] with default
 params[:to] || destination
 ```
 
-raises on using ternary operator with default
+better to use fetch operator
 
 ```ruby
-# bad
-params[:to] ? params[:to] : destination
+# good
+params.fetch(:to) { destination }
 ```
 
 ## Ducalis::KeywordDefaults
@@ -203,6 +364,13 @@ raises if method definition contains default values
 ```ruby
 # bad
 def calculate(step, index, dry = true); end
+```
+
+better to pass default values through keywords
+
+```ruby
+# good
+def calculate(step, index, dry: true); end
 ```
 
 ## Ducalis::ModuleLikeClass
@@ -223,6 +391,31 @@ class TaskJournal
   end
 
   def decline(user, task, estimate, details)
+    # ...
+  end
+
+  private
+
+  def log(record)
+    # ...
+  end
+end
+```
+
+better to pass common arguments to the constructor
+
+```ruby
+# good
+class TaskJournal
+  def initialize(customer, task, estimate)
+    # ...
+  end
+
+  def approve(options)
+    # ...
+  end
+
+  def decline(user, details)
     # ...
   end
 
@@ -276,6 +469,16 @@ def initialize(plan)
 end
 ```
 
+better to inject time as parameter to the method or constructor
+
+```ruby
+# good
+def initialize(plan, current_date: Date.current)
+  @year = plan[:year] || current_date.year
+  @quarter = plan[:quarter] || quarter(current_date)
+end
+```
+
 ## Ducalis::OnlyDefs
 
 Prefer object instances to class methods because class methods resist refactoring. Begin with an object instance, even if it doesn’t have state or multiple methods right away. If you come back to change it later, you will be more likely to refactor. If it never changes, the difference between the class method approach and the instance is negligible, and you certainly won’t be any worse off.
@@ -292,6 +495,21 @@ class TaskJournal
   end
 
   def self.find(args)
+    # ...
+  end
+end
+```
+
+better to use instance methods
+
+```ruby
+# good
+class TaskJournal
+  def call(task)
+    # ...
+  end
+
+  def find(args)
     # ...
   end
 end
@@ -337,12 +555,12 @@ def generate(document, options = {})
 end
 ```
 
-raises if method accepts options argument
+better to pass options with the split operator
 
 ```ruby
-# bad
-def log(record, options)
-  # ...
+# good
+def generate(document, format:, limit: 20, **options)
+  [format, limit, options]
 end
 ```
 
@@ -357,6 +575,17 @@ raises if user pass `params` as argument from controller
 class ProductsController < ApplicationController
   def index
     Record.new(params).log
+  end
+end
+```
+
+better to pass permitted params
+
+```ruby
+# good
+class ProductsController < ApplicationController
+  def index
+    Record.new(record_params).log
   end
 end
 ```
@@ -378,6 +607,17 @@ def load_group
 end
 ```
 
+better to use tap to increase code readability
+
+```ruby
+# good
+def load_group
+  channel.groups.find(params[:group_id]) do |group|
+    authorize group, :edit?
+  end
+end
+```
+
 ## Ducalis::PreferableMethods
 
 Prefer to use %<alternative>s method instead of %<original>s because of %<reason>s.
@@ -391,11 +631,11 @@ raises for `delete` method calling
 User.where(id: 7).delete
 ```
 
-raises `save` method calling with validate: false
+better to use callback-calling methods
 
 ```ruby
-# bad
-User.where(id: 7).save(validate: false)
+# good
+User.where(id: 7).destroy
 ```
 
 raises `update_column` method calling
@@ -423,6 +663,23 @@ class EmployeesController < ApplicationController
 end
 ```
 
+better to implicitly assign variables in public methods
+
+```ruby
+# good
+class EmployeesController < ApplicationController
+  def index
+    @employee = load_employee
+  end
+
+  private
+
+  def load_employee
+    Employee.find(params[:id])
+  end
+end
+```
+
 raises for memoization variables in controllers private methods
 
 ```ruby
@@ -436,7 +693,7 @@ class EmployeesController < ApplicationController
 end
 ```
 
-ignores memoization variables in private methods with _
+better to mark private methods memo variables with "_"
 
 ```ruby
 # good
@@ -467,6 +724,13 @@ raises if somewhere AR search was called on not protected scope
 Group.find(8)
 ```
 
+better to search records on protected scopes
+
+```ruby
+# good
+current_user.groups.find(8)
+```
+
 ## Ducalis::PublicSend
 
 You should avoid of using `send`-like method in production code. You can rewrite it as a hash with lambdas and fetch necessary actions or rewrite it as a module which you can include in code.
@@ -478,6 +742,18 @@ raises if send method used in code
 user.send(action)
 ```
 
+better to use mappings for multiple actions
+
+```ruby
+# good
+{
+  bark: ->(animal) { animal.bark },
+  meow: ->(animal) { animal.meow }
+}.fetch(actions)
+# or ever better
+animal.voice
+```
+
 ## Ducalis::RaiseWithoutErrorClass
 
 It's better to add exception class as raise argument. It will make easier to catch and process it later.
@@ -487,6 +763,13 @@ raises when `raise` called without exception class
 ```ruby
 # bad
 raise "Something went wrong"
+```
+
+better to `raise` with exception class
+
+```ruby
+# good
+raise StandardError, "Something went wrong"
 ```
 
 ## Ducalis::RegexCop
@@ -510,6 +793,14 @@ name = "john"
 puts "hi" if name =~ /john/
 ```
 
+better to move regexes to constants with examples
+
+```ruby
+# good
+FOUR_NUMBERS_REGEX = /\d{4}/ # 1234
+puts "match" if number =~ FOUR_NUMBERS_REGEX
+```
+
 ## Ducalis::RestOnlyCop
 
 It's better for controllers to stay adherent to REST:
@@ -522,7 +813,20 @@ raises for controllers with non-REST methods
 # bad
 class ProductsController < ApplicationController
   def index; end
-  def recalculate; end
+  def order; end
+end
+```
+
+better to use only REST methods and create new controllers
+
+```ruby
+# good
+class ProductsController < ApplicationController
+  def index; end
+end
+
+class OrdersController < ApplicationController
+  def create; end
 end
 ```
 
@@ -536,6 +840,13 @@ raises on RuboCop disable comments
 # bad
 # rubocop:disable Metrics/ParameterLists
 def calculate(five, args, at, one, list); end
+```
+
+better to follow RuboCop comments
+
+```ruby
+# good
+def calculate(five, context); end
 ```
 
 ## Ducalis::StandardMethods
@@ -552,6 +863,15 @@ def to_s
 end
 ```
 
+better to define non-default ruby methods
+
+```ruby
+# good
+def present
+  "my version"
+end
+```
+
 ## Ducalis::StringsInActiverecords
 
 Please, do not use strings as arguments for %<method_name>s argument. It's hard to test, grep sources, code highlighting and so on. Consider using of symbols or lambdas for complex expressions.
@@ -564,6 +884,13 @@ before_save :set_full_name,
  if: 'name_changed? || postfix_name_changed?'
 ```
 
+better to use lambda as argument
+
+```ruby
+# good
+validates :file, if: -> { remote_url.blank? }
+```
+
 ## Ducalis::TooLongWorkers
 
 Seems like your worker is doing too much work, consider of moving business logic to service object. As rule, workers should have only two responsibilities:
@@ -574,13 +901,33 @@ raises for a class with more than 5 lines
 
 ```ruby
 # bad
-class TestWorker
-  a = 1
-  a = 2
-  a = 3
-  a = 4
-  a = 5
-  a = 6
+class UserOnboardingWorker
+  def perform(user_id, group_id)
+    user = User.find_by(id: user_id)
+    group = Group.find(id: group_id)
+
+    return if user.nil? || group.nil?
+
+    GroupOnboard.new(user).process
+    OnboardingMailer.new(user).dliver_later
+    GroupNotifications.new(group).onboard(user)
+  end
+end
+```
+
+better to use workers only as async primitive and use services
+
+```ruby
+# good
+class UserOnboardingWorker
+  def perform(user_id, group_id)
+    user = User.find_by(id: user_id)
+    group = Group.find(id: group_id)
+
+    return if user.nil? || group.nil?
+
+    OnboardingProcessing.new(user).call
+  end
 end
 ```
 
@@ -598,7 +945,7 @@ gem 'rake', '~> 12.1'
 gem 'rspec', git: 'https://github.com/rspec/rspec'
 ```
 
-ignores for gem from github with comment
+better to add gems from github with explanatory comment
 
 ```ruby
 # good
@@ -618,7 +965,7 @@ raises for gem without version
 gem 'pry'
 ```
 
-ignores gems with locked versions
+better to lock gem versions
 
 ```ruby
 # good
@@ -653,6 +1000,21 @@ class ProductsController < ApplicationController
   before_filter :update_cost, only: [:index]
 
   def index; end
+
+  private
+
+  def update_cost; end
+end
+```
+
+better to inline calls for instead of moving it to only
+
+```ruby
+# good
+class ProductsController < ApplicationController
+  def index
+    update_cost
+  end
 
   private
 

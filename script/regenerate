@@ -1,4 +1,5 @@
 #!/bin/sh
 
+bundle update ducalis
 bundle exec ducalis --docs docs.md
 cat header.md docs.md > index.md
