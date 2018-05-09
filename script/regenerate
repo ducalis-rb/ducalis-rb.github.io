@@ -2,4 +2,6 @@
 
 bundle update ducalis
 bundle exec ducalis --docs docs.md
+bundle exec github_changelog_generator -u ignat-z -p ducalis
 cat header.md docs.md > index.md
+cat header.md CHANGELOG.md > log.md

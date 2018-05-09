@@ -92,21 +92,28 @@ a {
   background-color: $header-bg-color;
 
   @include large {
-    padding: 5rem 6rem;
+    padding: 2.5rem 6rem;
   }
 
   @include medium {
-    padding: 3rem 4rem;
+    padding: 1.5rem 4rem;
   }
 
   @include small {
-    padding: 2rem 1rem;
+    padding: 1rem 1rem;
   }
 }
 
 .logo {
   &:hover {
     text-decoration: none;
+  }
+}
+
+ul.links {
+  list-style-type: none;
+  a {
+    color: #ffffff;
   }
 }
 
