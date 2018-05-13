@@ -1,8 +1,8 @@
 GIT
   remote: git://github.com/ignat-z/ducalis.git
-  revision: 9fe5759ae01d1e70704824327504cb14efbf0b23
+  revision: 927c305605524d96310c65754248fb08bb1fd688
   specs:
-    ducalis (0.9.0)
+    ducalis (0.10.0)
       git (~> 1.3, >= 1.3.0)
       octokit (>= 4.1.0)
       regexp-examples (~> 1.3, >= 1.3.2)
@@ -25,7 +25,7 @@ GEM
       eventmachine (>= 0.12.9)
       http_parser.rb (~> 0.6.0)
     eventmachine (1.2.5)
-    faraday (0.15.0)
+    faraday (0.15.1)
       multipart-post (>= 1.2, < 3)
     faraday-http-cache (2.0.0)
       faraday (~> 0.8)

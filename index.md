@@ -3,7 +3,7 @@ layout: default
 ---
 ## Ducalis::BlackListSuffix
 
-Please, avoid using of class suffixes like `Meneger`, `Client` and so on. If it has no parts, change the name of the class to what each object is managing.
+Please, avoid using of class suffixes like `Manager`, `Client` and so on. If it has no parts, change the name of the class to what each object is managing.
 
 It's ok to use Manager as subclass of Person, which is there to refine a type of personal that has management behavior to it.
 Related [article](<http://www.carlopescio.com/2011/04/your-coding-conventions-are-hurting-you.html>)
