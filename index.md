@@ -252,7 +252,7 @@ end
 
 ## Ducalis::DescriptiveBlockNames
 
-Please, use descriptive names as block arguments. There is no any sanse to save on letters.
+Please, use descriptive names as block arguments. There is no any sense to save on letters.
 
 raises for blocks with one/two chars names
 
@@ -328,6 +328,66 @@ raises on multiple try callings
 ```ruby
 # bad
 product.try(:manufacturer).try(:contact)
+```
+
+## Ducalis::FacadePattern
+
+There are too many instance variables for one controller action. It's beetter to refactor it with Facade pattern to simplify the controller.
+Good article about [Facade](<https://medium.com/kkempin/facade-design-pattern-in-ruby-on-rails-710aa88326f>).
+
+raises on working with `session` object
+
+```ruby
+# bad
+class DashboardsController < ApplicationController
+  def index
+    @group = current_group
+    @relationship_manager = @group.relationship_manager
+    @contract_signer = @group.contract_signer
+
+    @statistic = EnrollmentStatistic.for(@group)
+    @tasks = serialize(@group.tasks, ' \
+serializer: TaskSerializer)
+    @external_links = @group.external_links
+  end
+end
+```
+
+better to use facade pattern
+
+```ruby
+# good
+class Dashboard
+  def initialize(group)
+    @group
+  end
+
+  def external_links
+    @group.external_links
+  end
+
+  def tasks
+    serialize(@group.tasks, serializer: TaskSerializer)
+  end
+
+  def statistic
+    EnrollmentStatistic.for(@group)
+  end
+
+  def contract_signer
+    @group.contract_signer
+  end
+
+  def relationship_manager
+    @group.relationship_manager
+  end
+end
+
+class DashboardsController < ApplicationController
+  def index
+    @dashboard = Dashboard.new(current_group)
+  end
+end
 ```
 
 ## Ducalis::FetchExpression
@@ -770,6 +830,34 @@ better to `raise` with exception class
 ```ruby
 # good
 raise StandardError, "Something went wrong"
+```
+
+## Ducalis::Recursion
+
+It seems like you are using recursion in your code. In common, it is not a bad idea, but try to keep your business logic layer free from refursion code.
+
+raises when method calls itself
+
+```ruby
+# bad
+def set_rand_password
+  password = SecureRandom.urlsafe_base64(PASSWORD_LENGTH)
+  return set_rand_password unless password.match(PASSWORD_REGEX)
+end
+```
+
+better to use lazy enumerations
+
+```ruby
+# good
+def repeatedly
+  Enumerator.new do |yielder|
+    loop { yielder.yield(yield) }
+  end
+end
+
+repeatedly { SecureRandom.urlsafe_base64(PASSWORD_LENGTH) }
+     .find { |password| password.match(PASSWORD_REGEX) }
 ```
 
 ## Ducalis::RegexCop

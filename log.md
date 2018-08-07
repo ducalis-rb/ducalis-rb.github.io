@@ -3,13 +3,34 @@ layout: default
 ---
 # Change Log
 
-## [Unreleased](https://github.com/ignat-z/ducalis/tree/HEAD)
-
-[Full Changelog](https://github.com/ignat-z/ducalis/compare/v0.10.0...HEAD)
+## [v0.11.0](https://github.com/ignat-z/ducalis/tree/v0.11.0) (2018-08-07)
+[Full Changelog](https://github.com/ignat-z/ducalis/compare/v0.10.0...v0.11.0)
 
 **Implemented enhancements:**
 
 - Add code coverage [\#106](https://github.com/ignat-z/ducalis/issues/106)
+
+**Fixed bugs:**
+
+- Wrong paths resolving on branch mode reporting [\#116](https://github.com/ignat-z/ducalis/issues/116)
+
+**Closed issues:**
+
+- Facade pattern for RoR actions [\#114](https://github.com/ignat-z/ducalis/issues/114)
+- Prevent ducalis from adding duplicate comments in PR reviews [\#112](https://github.com/ignat-z/ducalis/issues/112)
+- Prevent code which uses recursion [\#110](https://github.com/ignat-z/ducalis/issues/110)
+
+**Merged pull requests:**
+
+- \[\#DEV\] Add `Service` word to blacklist [\#120](https://github.com/ignat-z/ducalis/pull/120) ([ignat-z](https://github.com/ignat-z))
+- \[\#110\] Fix missing require for Recursion cop [\#119](https://github.com/ignat-z/ducalis/pull/119) ([ignat-z](https://github.com/ignat-z))
+- \[\#112\] Prevent Ducalis from reporting multiple comments [\#118](https://github.com/ignat-z/ducalis/pull/118) ([ignat-z](https://github.com/ignat-z))
+- \[\#116\] Proper paths resolving [\#117](https://github.com/ignat-z/ducalis/pull/117) ([ignat-z](https://github.com/ignat-z))
+- \[\#114\] Facade patter cop [\#115](https://github.com/ignat-z/ducalis/pull/115) ([ignat-z](https://github.com/ignat-z))
+- \[\#112\] Add Github commentator coverage [\#113](https://github.com/ignat-z/ducalis/pull/113) ([ignat-z](https://github.com/ignat-z))
+- \[\#110\] Add cop that detects recursions [\#111](https://github.com/ignat-z/ducalis/pull/111) ([ignat-z](https://github.com/ignat-z))
+- Improving language style. [\#109](https://github.com/ignat-z/ducalis/pull/109) ([maksar](https://github.com/maksar))
+- Fixing typo in error message. [\#108](https://github.com/ignat-z/ducalis/pull/108) ([maksar](https://github.com/maksar))
 
 ## [v0.10.0](https://github.com/ignat-z/ducalis/tree/v0.10.0) (2018-05-13)
 [Full Changelog](https://github.com/ignat-z/ducalis/compare/v0.9.0...v0.10.0)

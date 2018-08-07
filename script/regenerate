@@ -1,5 +1,5 @@
 #!/bin/sh
-
+: ${CHANGELOG_GITHUB_TOKEN?"Need to set CHANGELOG_GITHUB_TOKEN"}
 bundle update ducalis
 bundle exec ducalis --docs docs.md
 bundle exec github_changelog_generator -u ignat-z -p ducalis
