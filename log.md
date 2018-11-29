@@ -3,6 +3,47 @@ layout: default
 ---
 # Change Log
 
+## [v0.12.0](https://github.com/ignat-z/ducalis/tree/v0.12.0) (2018-11-29)
+[Full Changelog](https://github.com/ignat-z/ducalis/compare/v0.11.1...v0.12.0)
+
+**Implemented enhancements:**
+
+- Allow File.delete without warnings [\#140](https://github.com/ignat-z/ducalis/issues/140)
+- Introduce FULL tests flag to speed up old versions testing [\#137](https://github.com/ignat-z/ducalis/issues/137)
+- Ignore keyword arguments if there is only one argument in method [\#135](https://github.com/ignat-z/ducalis/issues/135)
+- Add workers to default ignore path for protected scope cop [\#134](https://github.com/ignat-z/ducalis/issues/134)
+- Add spec to ignore path by default [\#133](https://github.com/ignat-z/ducalis/issues/133)
+- Add yesterday to MultipleTimes cop [\#129](https://github.com/ignat-z/ducalis/issues/129)
+- Change facade pattern warning to handle git changes [\#123](https://github.com/ignat-z/ducalis/issues/123)
+
+**Closed issues:**
+
+- Add rubocop adapter or remove it as a dependency at all [\#132](https://github.com/ignat-z/ducalis/issues/132)
+- Request to use \x for complex regexes [\#46](https://github.com/ignat-z/ducalis/issues/46)
+
+**Merged pull requests:**
+
+- \[\#134\] Make it clear how to use Ducalis [\#143](https://github.com/ignat-z/ducalis/pull/143) ([ignat-z](https://github.com/ignat-z))
+- \[\#133\] \[skip ci\] Add tests folders to ignore by default [\#142](https://github.com/ignat-z/ducalis/pull/142) ([ignat-z](https://github.com/ignat-z))
+- \[\#140\] Resolve File.delete case [\#141](https://github.com/ignat-z/ducalis/pull/141) ([ignat-z](https://github.com/ignat-z))
+- \[\#137\] Introduce WITH\_DOCS flag which skips docs test by default [\#139](https://github.com/ignat-z/ducalis/pull/139) ([ignat-z](https://github.com/ignat-z))
+- \[\#135\] Modify keyword rule not to raise on one argument [\#138](https://github.com/ignat-z/ducalis/pull/138) ([nixon-by](https://github.com/nixon-by))
+- \[\#132\] Fix one more Rubocop breaking change [\#136](https://github.com/ignat-z/ducalis/pull/136) ([ignat-z](https://github.com/ignat-z))
+- \[\#129\] Add yesterday to MultipleTimes cop [\#131](https://github.com/ignat-z/ducalis/pull/131) ([kupolak](https://github.com/kupolak))
+- \[\#46\] Complex regexes cop [\#126](https://github.com/ignat-z/ducalis/pull/126) ([ignat-z](https://github.com/ignat-z))
+- \[\#123\] Enforce Facade code to raise warnings for each line [\#125](https://github.com/ignat-z/ducalis/pull/125) ([ignat-z](https://github.com/ignat-z))
+
+## [v0.11.1](https://github.com/ignat-z/ducalis/tree/v0.11.1) (2018-08-07)
+[Full Changelog](https://github.com/ignat-z/ducalis/compare/v0.11.0...v0.11.1)
+
+**Fixed bugs:**
+
+- Wrong path resolving for relative paths [\#121](https://github.com/ignat-z/ducalis/issues/121)
+
+**Merged pull requests:**
+
+- \[\#121\] Fix errors on running Ducalis with relative paths [\#122](https://github.com/ignat-z/ducalis/pull/122) ([ignat-z](https://github.com/ignat-z))
+
 ## [v0.11.0](https://github.com/ignat-z/ducalis/tree/v0.11.0) (2018-08-07)
 [Full Changelog](https://github.com/ignat-z/ducalis/compare/v0.10.0...v0.11.0)
 

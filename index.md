@@ -157,6 +157,37 @@ better to use mapping
 }.fetch(grade) { "You just making it up!" }
 ```
 
+## Ducalis::ComplexRegex
+
+It seems like this regex is a little bit complex. It's better to increase code readability by using long form with "\x".
+
+raises for regex with a lot of quantifiers
+
+```ruby
+# bad
+PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)./
+AGE_RANGE_MATCH = /^(\d+)(?:-)(\d+)$/
+FLOAT_NUMBER_REGEX = /(\d+,\d+.\d+|\d+[.,]\d+|\d+)/
+```
+
+better to use long form with comments
+
+```ruby
+# good
+COMPLEX_REGEX = %r{
+  start         # some text
+  \s            # white space char
+  (group)       # first group
+  (?:alt1|alt2) # some alternation
+  end
+}x
+LOG_FORMAT = %r{
+  (\d{2}:\d{2}) # Time
+  \s(\w+)       # Event type
+  \s(.*)        # Message
+}x
+```
+
 ## Ducalis::ControllersExcept
 
 Prefer to use `:only` over `:except` in controllers because it's more explicit and will be easier to maintain for new developers.
@@ -418,6 +449,7 @@ params.fetch(:to) { destination }
 ## Ducalis::KeywordDefaults
 
 Prefer to use keyword arguments for defaults. It increases readability and reduces ambiguities.
+It is ok if an argument is single and the name obvious from the function declaration.
 
 raises if method definition contains default values
 
